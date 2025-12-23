@@ -1,17 +1,21 @@
 package cleancode.minesweeper.tobe;
 
+import cleancode.minesweeper.tobe.gameLevel.GameLevel;
+
 import java.util.Arrays;
 
 public class GameBoard {
     private final Cell[][] board;
+    private final GameLevel gameLevel;
 
 
-    private GameBoard(Cell[][] board) {
-        this.board = board;
+    private GameBoard(GameLevel gameLevel) {
+        this.board = new Cell[gameLevel.getRowSize()][gameLevel.getColSize()];
+        this.gameLevel = gameLevel;
     }
 
-    static GameBoard fromSize(int rowSize, int colSize) {
-        return new GameBoard(new Cell[rowSize][colSize]);
+    static GameBoard fromGameLevel(GameLevel gameLevel) {
+        return new GameBoard(gameLevel);
     }
 
     public void flag(int rowIndex, int colIndex) {
@@ -43,11 +47,11 @@ public class GameBoard {
     }
 
     public int getRowSize() {
-        return this.board.length;
+        return this.gameLevel.getRowSize();
     }
 
     public int getColSize() {
-        return this.board[0].length;
+        return this.gameLevel.getColSize();
     }
 
     public String getSign(int rowIndex, int colIndex) {
@@ -64,5 +68,9 @@ public class GameBoard {
     public boolean isLandMineCell(int rowIndex, int colIndex) {
         Cell cell = this.findCell(rowIndex, colIndex);
         return cell.isLandMine();
+    }
+
+    public int getLandMineCount() {
+        return this.gameLevel.getLandMineCount();
     }
 }

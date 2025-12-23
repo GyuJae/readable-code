@@ -1,5 +1,6 @@
 package cleancode.minesweeper.tobe;
 
+import cleancode.minesweeper.tobe.gameLevel.GameLevel;
 import cleancode.minesweeper.tobe.io.ConsoleInputHandler;
 import cleancode.minesweeper.tobe.io.ConsoleOutputHandler;
 
@@ -7,14 +8,20 @@ import java.util.Random;
 
 public class Minesweeper {
 
-    public static final int BOARD_ROW_SIZE = 8;
-    public static final int BOARD_COL_SIZE = 10;
-    public static final int LAND_MINE_COUNT = 10;
     private static int gameStatus = 0; // 0: 게임 중, 1: 승리, -1: 패배
 
-    private final GameBoard gameBoard = GameBoard.fromSize(BOARD_ROW_SIZE, BOARD_COL_SIZE);
+    private final GameBoard gameBoard;
     private final ConsoleInputHandler consoleInputHandler = new ConsoleInputHandler();
     private final ConsoleOutputHandler consoleOutputHandler = new ConsoleOutputHandler();
+
+
+    private Minesweeper(GameLevel gameLevel) {
+        this.gameBoard = GameBoard.fromGameLevel(gameLevel);
+    }
+
+    public static Minesweeper fromGameLevel(GameLevel gameLevel) {
+        return new Minesweeper(gameLevel);
+    }
 
     public void run() {
         this.consoleOutputHandler.printGameStartComments();
@@ -74,7 +81,7 @@ public class Minesweeper {
 
     private int convertRowFrom(char cellInputRow) {
         int rowIndex = Character.getNumericValue(cellInputRow) - 1;
-        if (rowIndex >= BOARD_ROW_SIZE) {
+        if (rowIndex >= this.gameBoard.getRowSize()) {
             throw new GameException("잘못된 입력입니다.");
         }
 
@@ -126,22 +133,22 @@ public class Minesweeper {
         if (row - 1 >= 0 && this.gameBoard.isLandMineCell(row - 1, col)) {
             count++;
         }
-        if (row - 1 >= 0 && col + 1 < BOARD_COL_SIZE && this.gameBoard.isLandMineCell(row - 1, col + 1)) {
+        if (row - 1 >= 0 && col + 1 < this.gameBoard.getColSize() && this.gameBoard.isLandMineCell(row - 1, col + 1)) {
             count++;
         }
         if (col - 1 >= 0 && this.gameBoard.isLandMineCell(row, col - 1)) {
             count++;
         }
-        if (col + 1 < BOARD_COL_SIZE && this.gameBoard.isLandMineCell(row, col + 1)) {
+        if (col + 1 < this.gameBoard.getColSize() && this.gameBoard.isLandMineCell(row, col + 1)) {
             count++;
         }
-        if (row + 1 < BOARD_ROW_SIZE && col - 1 >= 0 && this.gameBoard.isLandMineCell(row + 1, col - 1)) {
+        if (row + 1 < this.gameBoard.getRowSize() && col - 1 >= 0 && this.gameBoard.isLandMineCell(row + 1, col - 1)) {
             count++;
         }
-        if (row + 1 < BOARD_ROW_SIZE && this.gameBoard.isLandMineCell(row + 1, col)) {
+        if (row + 1 < this.gameBoard.getRowSize() && this.gameBoard.isLandMineCell(row + 1, col)) {
             count++;
         }
-        if (row + 1 < BOARD_ROW_SIZE && col + 1 < BOARD_COL_SIZE && this.gameBoard.isLandMineCell(row + 1, col + 1)) {
+        if (row + 1 < this.gameBoard.getRowSize() && col + 1 < this.gameBoard.getColSize() && this.gameBoard.isLandMineCell(row + 1, col + 1)) {
             count++;
         }
         return count;
@@ -154,18 +161,18 @@ public class Minesweeper {
     }
 
     private void initializeGame() {
-        for (int row = 0; row < BOARD_ROW_SIZE; row++) {
-            for (int col = 0; col < BOARD_COL_SIZE; col++) {
+        for (int row = 0; row < this.gameBoard.getRowSize(); row++) {
+            for (int col = 0; col < this.gameBoard.getColSize(); col++) {
                 this.gameBoard.updateCell(row, col, Cell.create());
             }
         }
-        for (int i = 0; i < LAND_MINE_COUNT; i++) {
-            int row = new Random().nextInt(BOARD_ROW_SIZE);
-            int col = new Random().nextInt(BOARD_COL_SIZE);
+        for (int i = 0; i < this.gameBoard.getLandMineCount(); i++) {
+            int row = new Random().nextInt(this.gameBoard.getRowSize());
+            int col = new Random().nextInt(this.gameBoard.getColSize());
             this.gameBoard.turnOnLandMine(row, col);
         }
-        for (int row = 0; row < BOARD_ROW_SIZE; row++) {
-            for (int col = 0; col < BOARD_COL_SIZE; col++) {
+        for (int row = 0; row < this.gameBoard.getRowSize(); row++) {
+            for (int col = 0; col < this.gameBoard.getColSize(); col++) {
                 if (this.gameBoard.isLandMineCell(row, col)) {
                     continue;
                 }
@@ -175,7 +182,7 @@ public class Minesweeper {
     }
 
     private void openSurroundedCells(int row, int col) {
-        if (row < 0 || row >= BOARD_ROW_SIZE || col < 0 || col >= BOARD_COL_SIZE) {
+        if (row < 0 || row >= this.gameBoard.getRowSize() || col < 0 || col >= this.gameBoard.getColSize()) {
             return;
         }
 
