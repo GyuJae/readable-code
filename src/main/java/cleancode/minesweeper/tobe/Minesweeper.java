@@ -1,5 +1,7 @@
 package cleancode.minesweeper.tobe;
 
+import cleancode.minesweeper.tobe.cell.Cell;
+import cleancode.minesweeper.tobe.cell.EmptyCell;
 import cleancode.minesweeper.tobe.gameLevel.GameLevel;
 import cleancode.minesweeper.tobe.io.ConsoleInputHandler;
 import cleancode.minesweeper.tobe.io.ConsoleOutputHandler;
@@ -163,7 +165,7 @@ public class Minesweeper {
     private void initializeGame() {
         for (int row = 0; row < this.gameBoard.getRowSize(); row++) {
             for (int col = 0; col < this.gameBoard.getColSize(); col++) {
-                this.gameBoard.updateCell(row, col, Cell.create());
+                this.gameBoard.updateCell(row, col, new EmptyCell());
             }
         }
         for (int i = 0; i < this.gameBoard.getLandMineCount(); i++) {
@@ -176,7 +178,11 @@ public class Minesweeper {
                 if (this.gameBoard.isLandMineCell(row, col)) {
                     continue;
                 }
-                this.gameBoard.updateNearbyLandMineCount(row, col, countNearbyLandMines(row, col));
+
+                int count = this.countNearbyLandMines(row, col);
+                if (count == 0) continue;
+
+                this.gameBoard.updateNearbyLandMineCount(row, col, count);
             }
         }
     }
