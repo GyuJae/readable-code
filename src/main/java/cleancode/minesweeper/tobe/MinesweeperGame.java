@@ -83,26 +83,22 @@ public class MinesweeperGame {
     }
 
     private static char getSelectedRowIndex(String cellInput) {
-        char cellInputRow = cellInput.charAt(1);
-        return cellInputRow;
+        return cellInput.charAt(1);
     }
 
     private static char getSelectedColIndex(String cellInput) {
-        char cellInputCol = cellInput.charAt(0);
-        return cellInputCol;
+        return cellInput.charAt(0);
     }
 
     private static String getUserActionInputFromUser() {
         System.out.println("선택한 셀에 대한 행위를 선택하세요. (1: 오픈, 2: 깃발 꽂기)");
-        String userActionInput = SCANNER.nextLine();
-        return userActionInput;
+        return SCANNER.nextLine();
     }
 
     private static String getCellInputFromUser() {
         System.out.println();
         System.out.println("선택할 좌표를 입력하세요. (예: a1)");
-        String cellInput = SCANNER.nextLine();
-        return cellInput;
+        return SCANNER.nextLine();
     }
 
     private static boolean doesUserLoseTheGame() {
